@@ -135,6 +135,12 @@ DEFCONST "F_IMMED", f_immed, F_IMMED
 DEFCONST "F_HIDDEN", f_hidden, F_HIDDEN
 DEFCONST "F_LENMASK", f_lenmask, F_LENMASK
 
+DEFCONST "SYS_EXIT", sys_exit, SYS_EXIT
+DEFCONST "SYS_OPEN", sys_open, SYS_OPEN
+DEFCONST "SYS_CLOSE", sys_close, SYS_CLOSE
+DEFCONST "SYS_READ", sys_read, SYS_READ
+DEFCONST "SYS_WRITE", sys_write, SYS_WRITE
+
 ;; Variables.
 
 DEFVAR "STATE", state
@@ -898,6 +904,40 @@ DEFCODE "EXECUTE", execute
     mov rax, r8
     pop r8
 jmp [rax]
+
+DEFCODE "SYSCALL3", syscall3
+    pop r9
+    pop r10
+    pop r11
+    SAVE
+    SYSCALL r8, r9, r10, r11
+    RESTORE
+    mov r8, rax
+NEXT
+
+DEFCODE "SYSCALL2", syscall2
+    pop r9
+    pop r10
+    SAVE
+    SYSCALL r8, r9, r10
+    RESTORE
+    mov r8, rax
+NEXT
+
+DEFCODE "SYSCALL1", syscall1
+    pop r9
+    SAVE
+    SYSCALL r8, r9
+    RESTORE
+    mov r8, rax
+NEXT
+
+DEFCODE "SYSCALL0", syscall0
+    SAVE
+    SYSCALL r8
+    RESTORE
+    mov r8, rax
+NEXT
 
 DEFWORD "LAST", last, F_HIDDEN
 dq exit
