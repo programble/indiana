@@ -271,37 +271,37 @@ NEXT
 
 DEFCODE "=", equ
     pop r9
-    cmp r8, r9
+    cmp r9, r8
     SET e
 NEXT
 
 DEFCODE "<>", nequ
     pop r9
-    cmp r8, r9
+    cmp r9, r8
     SET ne
 NEXT
 
 DEFCODE "<", lt
     pop r9
-    cmp r8, r9
+    cmp r9, r8
     SET l
 NEXT
 
 DEFCODE ">", gt
     pop r9
-    cmp r8, r9
+    cmp r9, r8
     SET g
 NEXT
 
 DEFCODE "<=", le
     pop r9
-    cmp r8, r9
+    cmp r9, r8
     SET le
 NEXT
 
 DEFCODE ">=", ge
     pop r9
-    cmp r8, r9
+    cmp r9, r8
     SET ge
 NEXT
 
