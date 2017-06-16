@@ -37,6 +37,8 @@ rstack: resb 8192
     .$:
 
 START
+    mov rax, 0DEADBEEFCAFEBABEh
+    push rax
     mov [rel var_sz], rsp
     xor r8, r8
     mov rbp, rstack.$
@@ -721,6 +723,8 @@ DEFCODE "HEADER,", header_comma
     mov rax, [rel var_here]
     mov [rel var_latest], rax
     mov [rel var_here], rdi
+
+    pop r8
 NEXT
 
 DEFCODE ",", comma
@@ -753,6 +757,7 @@ NEXT
 DEFCODE "HIDDEN", hidden
     add r8, 8
     xor byte [r8], F_HIDDEN
+    pop r8
 NEXT
 
 DEFCODE "'", tick
