@@ -755,6 +755,12 @@ DEFCODE "HIDDEN", hidden
     xor byte [r8], F_HIDDEN
 NEXT
 
+DEFCODE "'", tick
+    push r8
+    lodsq
+    mov r8, rax
+NEXT
+
 DEFWORD ":", colon
     dq $word
     dq header_comma
