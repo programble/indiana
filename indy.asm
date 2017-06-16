@@ -144,7 +144,7 @@ DEFCONST "SYS_WRITE", sys_write, SYS_WRITE
 ;; Variables.
 
 DEFVAR "STATE", state
-DEFVAR "DP", dp, data
+DEFVAR "HERE", here, data
 DEFVAR "LATEST", latest, word_last
 DEFVAR "S0", sz
 DEFVAR "BASE", base, 10
@@ -705,7 +705,7 @@ DEFCODE "HEADER,", header_comma
     mov rcx, r8
     pop rbx
 
-    mov rdi, [rel var_dp]
+    mov rdi, [rel var_here]
     mov rax, [rel var_latest]
     stosq
 
@@ -718,9 +718,9 @@ DEFCODE "HEADER,", header_comma
     add rdi, 7
     and rdi, ~7
 
-    mov rax, [rel var_dp]
+    mov rax, [rel var_here]
     mov [rel var_latest], rax
-    mov [rel var_dp], rdi
+    mov [rel var_here], rdi
 NEXT
 
 DEFCODE ",", comma
@@ -731,9 +731,9 @@ NEXT
 
 align 16
 _comma:
-    mov rdi, [rel var_dp]
+    mov rdi, [rel var_here]
     stosq
-    mov [rel var_dp], rdi
+    mov [rel var_here], rdi
 ret
 
 DEFCODE "[", lbrac, F_IMMED
