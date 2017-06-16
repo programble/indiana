@@ -37,8 +37,6 @@ rstack: resb 8192
     .$:
 
 START
-    mov rax, 0DEADBEEFCAFEBABEh
-    push rax
     mov [rel var_sz], rsp
     xor r8, r8
     mov rbp, rstack.$
