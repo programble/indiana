@@ -634,7 +634,7 @@ NEXT
 
 ;; Dictionary lookup.
 
-DEFCODE "(FIND)", pfind
+DEFCODE "FIND", find
     mov rcx, r8
     pop rdi
     call _find
@@ -777,7 +777,7 @@ dq exit
 
 DEFWORD "HIDE", hide
     dq $word
-    dq pfind
+    dq find
     dq hidden
 dq exit
 
