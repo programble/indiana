@@ -476,7 +476,9 @@ ret
 
 align 16
 .fill:
-    SYS_READ 0, keybuf, keybuf.#
+    SAVE
+    SYSCALL SYS_READ, 0, keybuf, keybuf.#
+    RESTORE
     test rax, rax
     jbe .exit
     mov rbx, keybuf
@@ -488,12 +490,14 @@ jmp _key
 
 align 16
 .exit:
-    SYS_EXIT rax
+    SYSCALL SYS_EXIT, rax
 jmp .exit
 
 DEFCODE "EMIT", emit
     push r8
-    SYS_WRITE 1, rsp, 1
+    SAVE
+    SYSCALL SYS_WRITE, 1, rsp, 1
+    RESTORE
     pop rax
     pop r8
 NEXT
@@ -609,7 +613,9 @@ ret
 
 DEFCODE "TELL", tell
     pop rax
-    SYS_WRITE 1, rax, r8
+    SAVE
+    SYSCALL SYS_WRITE, 1, rax, r8
+    RESTORE
     pop r8
 NEXT
 
@@ -872,7 +878,8 @@ NEXT
 
 align 16
 .error:
-    SYS_WRITE 2, errmsg, errmsg.#
+    SAVE
+    SYSCALL SYS_WRITE, 2, errmsg, errmsg.#
     mov rcx, [rel keybuf.@]
     mov rdx, rcx
     mov rax, keybuf
@@ -882,8 +889,9 @@ align 16
     mov rdx, 40
     .print:
     sub rcx, rdx
-    SYS_WRITE 2, rcx, rdx
-    SYS_WRITE 2, errmsg.nl, 1
+    SYSCALL SYS_WRITE, 2, rcx, rdx
+    SYSCALL SYS_WRITE, 2, errmsg.nl, 1
+    RESTORE
 NEXT
 
 DEFCODE "EXECUTE", execute

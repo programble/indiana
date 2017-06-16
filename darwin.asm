@@ -5,36 +5,39 @@
     start:
 %endmacro
 
-%macro SYS_EXIT 1
-    mov rdi, %1
-    mov rax, 0200_0001h
-    syscall
-%endmacro
-
-%macro SYS_READ 3
+%macro SAVE 0
     mov r15, rsi
     mov r14, r8
+%endmacro
 
-    mov rdi, %1
-    mov rsi, %2
-    mov rdx, %3
-    mov rax, 0200_0003h
-    syscall
-
+%macro RESTORE 0
     mov r8, r14
     mov rsi, r15
 %endmacro
 
-%macro SYS_WRITE 3
-    mov r15, rsi
-    mov r14, r8
-
-    mov rdi, %1
-    mov rsi, %2
-    mov rdx, %3
-    mov rax, 0200_0004h
+%macro SYSCALL 1
+    mov rax, %1
     syscall
-
-    mov r8, r14
-    mov rsi, r15
 %endmacro
+
+%macro SYSCALL 2
+    mov rdi, %2
+    mov rax, %1
+    syscall
+%endmacro
+
+%macro SYSCALL 3
+    mov rsi, %3
+    SYSCALL %1, %2
+%endmacro
+
+%macro SYSCALL 4
+    mov rdx, %4
+    SYSCALL %1, %2, %3
+%endmacro
+
+SYS_EXIT:  equ 0200_0001h
+SYS_READ:  equ 0200_0003h
+SYS_WRITE: equ 0200_0004h
+SYS_OPEN:  equ 0200_0005h
+SYS_CLOSE: equ 0200_0006h
