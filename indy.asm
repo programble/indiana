@@ -253,14 +253,6 @@ DEFCODE "/MOD", divmod
     mov r8, rax
 NEXT
 
-DEFCODE "U/MOD", udivmod
-    pop rax
-    xor rdx, rdx
-    div r8
-    push rdx
-    mov r8, rax
-NEXT
-
 ;; Comparisons.
 
 %macro SET 1
@@ -783,12 +775,6 @@ DEFWORD "HIDE", hide
     dq find
     dq hidden
 dq exit
-
-DEFCODE "[']", bractick
-    push r8
-    lodsq
-    mov r8, rax
-NEXT
 
 ;; Branching.
 
