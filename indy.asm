@@ -191,7 +191,7 @@ NEXT
 
 DEFCODE "2DUP", twodup
     push r8
-    push qword [rsp - 8]
+    push qword [rsp + 8]
 NEXT
 
 DEFCODE "2SWAP", twoswap
