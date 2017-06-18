@@ -255,76 +255,67 @@ NEXT
 
 ;; Comparisons.
 
-%macro SET 1
-    set%+1 r8l
-    movzx r8, r8l
-    neg r8
+%macro CMP 1
+    xor rax, rax
+    pop r9
+    cmp r9, r8
+    set%+1 al
+    mov r8, rax
 %endmacro
 
 DEFCODE "=", equ
-    pop r9
-    cmp r9, r8
-    SET e
+    CMP e
 NEXT
 
 DEFCODE "<>", nequ
-    pop r9
-    cmp r9, r8
-    SET ne
+    CMP ne
 NEXT
 
 DEFCODE "<", lt
-    pop r9
-    cmp r9, r8
-    SET l
+    CMP l
 NEXT
 
 DEFCODE ">", gt
-    pop r9
-    cmp r9, r8
-    SET g
+    CMP g
 NEXT
 
 DEFCODE "<=", le
-    pop r9
-    cmp r9, r8
-    SET le
+    CMP le
 NEXT
 
 DEFCODE ">=", ge
-    pop r9
-    cmp r9, r8
-    SET ge
+    CMP ge
 NEXT
 
-DEFCODE "0=", zequ
+%macro TEST 1
+    xor rax, rax
     test r8, r8
-    SET z
+    set%+1 al
+    mov r8, rax
+%endmacro
+
+DEFCODE "0=", zequ
+    TEST z
 NEXT
 
 DEFCODE "0<>", znequ
-    test r8, r8
-    SET nz
+    TEST nz
 NEXT
 
 DEFCODE "0<", zlt
-    test r8, r8
-    SET l
+    TEST l
 NEXT
 
 DEFCODE "0>", zgt
-    test r8, r8
-    SET g
+    TEST g
 NEXT
 
 DEFCODE "0<=", zle
-    test r8, r8
-    SET le
+    TEST le
 NEXT
 
 DEFCODE "0>=", zge
-    test r8, r8
-    SET ge
+    TEST ge
 NEXT
 
 ;; Bitwise operations.
