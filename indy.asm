@@ -782,22 +782,6 @@ NEXT
 
 ;; Interpreter.
 
-section .text
-align 16
-dodoes:
-    cmp qword [rax + 8], 0
-    jz .push
-
-    RBPUSH rsi
-    mov rsi, [rax + 8]
-
-    .push:
-    push r8
-    lea r8, [rax + 16]
-NEXT
-
-DEFCONST "DODOES", _dodoes, dodoes
-
 DEFWORD "QUIT", quit
     dq rz, rspstore
     dq interpret
