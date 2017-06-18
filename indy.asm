@@ -701,7 +701,7 @@ dq exit
 
 ;; Compiling.
 
-DEFCODE "HEADER,", header_comma
+DEFCODE "CREATE", create
     mov rcx, r8
     pop rbx
 
@@ -766,7 +766,7 @@ NEXT
 
 DEFWORD ":", colon
     dq $word
-    dq header_comma
+    dq create
     dq lit, docol, comma
     dq latest, fetch, hidden
     dq rbrac
