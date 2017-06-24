@@ -130,6 +130,7 @@ NEXT
 
 DEFCONST "VERSION", version, INDIANA_VERSION
 DEFCONST "R0", rz, rstack.$
+DEFCONST "LIMIT", limit, data.$
 DEFCONST "DOCOL", _docol, docol
 DEFCONST "F_IMMED", f_immed, F_IMMED
 DEFCONST "F_HIDDEN", f_hidden, F_HIDDEN
@@ -912,6 +913,9 @@ NEXT
 DEFWORD "LAST", last, F_HIDDEN
 dq exit
 
+;; 640K ought to be enough for anybody.
+
 section .bss
 alignb 4096
-data: resb 65536
+data: resb 655360
+    .$:

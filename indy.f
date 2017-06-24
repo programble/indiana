@@ -572,6 +572,8 @@
 
 : BYE 0 SYS_EXIT SYSCALL1 ;
 
+: UNUSED ( -- n ) LIMIT HERE @ - 8 / ;
+
 ( TODO MORECORE )
 
 \ File I/O.
@@ -602,6 +604,7 @@ DECIMAL
 : WELCOME ( -- )
     S" TEST-MODE" FIND NOT IF
         ." INDIANA VERSION " VERSION . CR
+        UNUSED . ." CELLS REMAINING" CR
         ." OK "
     THEN
 ;
