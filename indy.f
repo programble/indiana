@@ -566,15 +566,21 @@
 
 \ Environment.
 
-( TODO )
+: ARGC ( -- n ) S0 @ @ ;
+
+: ARGV ( n -- str len )
+    1+ CELLS S0 @ +
+    @
+    DUP STRLEN
+;
+
+: ENVIRON ( -- addr ) ARGC 2 + CELLS S0 @ + ;
 
 \ Syscalls.
 
 : BYE 0 SYS_EXIT SYSCALL1 ;
 
 : UNUSED ( -- n ) LIMIT HERE @ - 8 / ;
-
-( TODO MORECORE )
 
 \ File I/O.
 
