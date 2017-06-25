@@ -643,9 +643,36 @@ HEX
     [COMPILE] [
 ;
 
+: =NEXT ( addr -- next? )
+       DUP C@ 48 <> IF DROP FALSE EXIT THEN
+    1+ DUP C@ AD <> IF DROP FALSE EXIT THEN
+    1+ DUP C@ FF <> IF DROP FALSE EXIT THEN
+    1+     C@ 20 <> IF      FALSE EXIT THEN
+    TRUE
+;
+
 DECIMAL
 
-( TODO )
+: (INLINE) ( cfa -- )
+    @
+    BEGIN
+        DUP =NEXT NOT
+    WHILE
+        DUP C@ C,
+        1+
+    REPEAT
+    DROP
+;
+
+: INLINE IMMEDIATE
+    WORD FIND >CFA
+    DUP @ DOCOL = IF
+        ." Cannot INLINE FORTH words" CR ABORT
+    THEN
+    (INLINE)
+;
+
+HIDE =NEXT
 
 \ Welcome.
 
