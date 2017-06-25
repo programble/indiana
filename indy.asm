@@ -523,7 +523,9 @@ _word:
     mov rdi, wordbuf
     .loop:
         stosb
+        push rdi
         call _key
+        pop rdi
         cmp al, ' '
     ja .loop
 
@@ -795,7 +797,7 @@ NEXT
 DEFWORD "QUIT", quit
     dq rz, rspstore
     dq interpret
-dq branch, -32
+dq quit
 
 section .data
 align 8
