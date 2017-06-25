@@ -6,6 +6,10 @@ case `uname` in
     nasm -P darwin.asm -f macho64 indy.asm
     ld -o indy indy.o
     ;;
+  Linux)
+    nasm -P linux.asm -f elf64 indy.asm
+    ld -o indy indy.o
+    ;;
   *)
     echo "unsupported: `uname`"
     exit 1
