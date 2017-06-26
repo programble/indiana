@@ -1,6 +1,7 @@
 INDIANA_VERSION: equ 1
 
 bits 64
+default rel
 %use altreg
 %use smartalign
 alignmode p6
@@ -37,7 +38,7 @@ rstack: resb 8192
     .$:
 
 START
-    mov [rel var_sz], rsp
+    mov [var_sz], rsp
     xor r8, r8
     mov rbp, rstack.$
     mov rsi, .quit
@@ -465,12 +466,12 @@ align 8
 section .text
 align 16
 _key:
-    mov rbx, [rel keybuf.@]
-    cmp rbx, [rel keybuf.$]
+    mov rbx, [keybuf.@]
+    cmp rbx, [keybuf.$]
     jge .fill
     xor rax, rax
     mov al, [rbx]
-    add qword [rel keybuf.@], 1
+    add qword [keybuf.@], 1
 ret
 
 align 16
@@ -482,9 +483,9 @@ align 16
     jbe .exit
     mov rbx, keybuf
     add rax, rbx
-    mov [rel keybuf.$], rax
+    mov [keybuf.$], rax
     mov rax, keybuf
-    mov [rel keybuf.@], rax
+    mov [keybuf.@], rax
 jmp _key
 
 align 16
@@ -558,7 +559,7 @@ _number:
     test rcx, rcx
     jz .empty
 
-    mov rdx, [rel var_base]
+    mov rdx, [var_base]
 
     mov bl, [rdi]
     add rdi, 1
@@ -700,8 +701,8 @@ DEFCODE "CREATE", create
     mov rcx, r8
     pop rbx
 
-    mov rdi, [rel var_here]
-    mov rax, [rel var_latest]
+    mov rdi, [var_here]
+    mov rax, [var_latest]
     stosq
 
     mov al, cl
@@ -713,9 +714,9 @@ DEFCODE "CREATE", create
     add rdi, 7
     and rdi, ~7
 
-    mov rax, [rel var_here]
-    mov [rel var_latest], rax
-    mov [rel var_here], rdi
+    mov rax, [var_here]
+    mov [var_latest], rax
+    mov [var_here], rdi
 
     pop r8
 NEXT
@@ -728,21 +729,21 @@ NEXT
 
 align 16
 _comma:
-    mov rdi, [rel var_here]
+    mov rdi, [var_here]
     stosq
-    mov [rel var_here], rdi
+    mov [var_here], rdi
 ret
 
 DEFCODE "[", lbrac, F_IMMED
-    mov qword [rel var_state], 0
+    mov qword [var_state], 0
 NEXT
 
 DEFCODE "]", rbrac
-    mov qword [rel var_state], 1
+    mov qword [var_state], 1
 NEXT
 
 DEFCODE "IMMEDIATE", immediate, F_IMMED
-    mov rdi, [rel var_latest]
+    mov rdi, [var_latest]
     add rdi, 8
     xor byte [rdi], F_IMMED
 NEXT
@@ -811,7 +812,7 @@ errmsg: db "PARSE ERROR: "
 DEFCODE "INTERPRET", interpret
     call _word
 
-    mov qword [rel islit], 0
+    mov qword [islit], 0
     call _find
     test rax, rax
     jz .lit
@@ -826,7 +827,7 @@ DEFCODE "INTERPRET", interpret
 
     align 16
     .lit:
-    mov qword [rel islit], 1
+    mov qword [islit], 1
     call _number
     test rcx, rcx
     jnz .error
@@ -835,12 +836,12 @@ DEFCODE "INTERPRET", interpret
 
     align 16
     .compile:
-    mov rdx, [rel var_state]
+    mov rdx, [var_state]
     test rdx, rdx
     jz .exec
 
     call _comma
-    mov rcx, [rel islit]
+    mov rcx, [islit]
     test rcx, rcx
     jnz .clit
 NEXT
@@ -853,7 +854,7 @@ NEXT
 
 align 16
 .exec:
-    mov rcx, [rel islit]
+    mov rcx, [islit]
     test rcx, rcx
     jnz .elit
 jmp [rax]
@@ -868,7 +869,7 @@ align 16
 .error:
     SAVE
     SYSCALL SYS_WRITE, 2, errmsg, errmsg.#
-    mov rcx, [rel keybuf.@]
+    mov rcx, [keybuf.@]
     mov rdx, rcx
     mov rax, keybuf
     sub rdx, rax
