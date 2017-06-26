@@ -15,8 +15,7 @@
 
 %macro SYSCALL 2
     mov rdi, %2
-    mov rax, %1
-    syscall
+    SYSCALL %1
 %endmacro
 
 %macro SYSCALL 3
