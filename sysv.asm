@@ -1,11 +1,9 @@
 %macro SAVE 0
-    mov r15, rsi
-    mov r14, r8
+    mov rbx, rsi
 %endmacro
 
 %macro RESTORE 0
-    mov r8, r14
-    mov rsi, r15
+    mov rsi, rbx
 %endmacro
 
 %macro SYSCALL 1

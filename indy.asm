@@ -39,7 +39,7 @@ rstack: resb 8192
 
 START
     mov [var_sz], rsp
-    xor r8, r8
+    xor r12, r12
     mov rbp, rstack.$
     mov rsi, .quit
 NEXT
@@ -89,16 +89,16 @@ F_LENMASK: equ 0011_1111b
 ;; DEFCONST "name", label, value, flags
 %macro DEFCONST 3-4 0
     DEFCODE %1, %2, %4
-        push r8
-        mov r8, %3
+        push r12
+        mov r12, %3
     NEXT
 %endmacro
 
 ;; DEFVAR "name", label, value, flags
 %macro DEFVAR 2-4 0, 0
     DEFCODE %1, %2, %4
-        push r8
-        mov r8, var_%2
+        push r12
+        mov r12, var_%2
     NEXT
     section .data
     align 8
@@ -112,16 +112,16 @@ DEFCODE "EXIT", exit
 NEXT
 
 DEFCODE "LIT", lit
-    push r8
+    push r12
     lodsq
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 DEFCODE "LITSTRING", litstring
-    push r8
+    push r12
     lodsq
     push rsi
-    mov r8, rax
+    mov r12, rax
     add rsi, rax
     add rsi, 7
     and rsi, ~7
@@ -163,115 +163,109 @@ DEFVAR "BASE", base, 10
 ;; Basic stack operations.
 
 DEFCODE "DROP", drop
-    pop r8
+    pop r12
 NEXT
 
 DEFCODE "SWAP", swap
-    xchg r8, [rsp]
+    xchg r12, [rsp]
 NEXT
 
 DEFCODE "DUP", dup
-    push r8
+    push r12
 NEXT
 
 DEFCODE "OVER", over
-    push r8
-    mov r8, [rsp + 8]
+    push r12
+    mov r12, [rsp + 8]
 NEXT
 
 DEFCODE "ROT", rot
-    pop r9
-    pop r10
-    push r9
-    push r8
-    mov r8, r10
+    xchg r12, [rsp]
+    xchg r12, [rsp + 8]
 NEXT
 
 DEFCODE "-ROT", nrot
-    pop r9
-    pop r10
-    push r8
-    push r10
-    mov r8, r9
+    xchg r12, [rsp + 8]
+    xchg r12, [rsp]
 NEXT
 
 DEFCODE "2DROP", twodrop
-    pop r8
-    pop r8
+    pop r12
+    pop r12
 NEXT
 
 DEFCODE "2DUP", twodup
-    push r8
+    push r12
     push qword [rsp + 8]
 NEXT
 
 DEFCODE "2SWAP", twoswap
-    pop r9
-    pop r10
-    pop r11
-    push r9
-    push r8
-    push r11
-    mov r8, r10
+    pop r13
+    pop r14
+    pop r15
+    push r13
+    push r12
+    push r15
+    mov r12, r14
 NEXT
 
 DEFCODE "?DUP", qdup
-    test r8, r8
+    test r12, r12
     jz .else
-        push r8
+        push r12
     .else:
 NEXT
 
 ;; Arithmetic.
 
 DEFCODE "1+", incr
-    add r8, 1
+    add r12, 1
 NEXT
 
 DEFCODE "1-", decr
-    sub r8, 1
+    sub r12, 1
 NEXT
 
 DEFCODE "8+", incr8
-    add r8, 8
+    add r12, 8
 NEXT
 
 DEFCODE "8-", decr8
-    sub r8, 8
+    sub r12, 8
 NEXT
 
 DEFCODE "+", add
-    pop r9
-    add r8, r9
+    pop r13
+    add r12, r13
 NEXT
 
 DEFCODE "-", sub
-    pop r9
-    sub r9, r8
-    mov r8, r9
+    pop r13
+    sub r13, r12
+    mov r12, r13
 NEXT
 
 DEFCODE "*", mul
-    pop r9
-    imul r8, r9
+    pop r13
+    imul r12, r13
 NEXT
 
 DEFCODE "/MOD", divmod
     pop rax
     cqo
-    idiv r8
+    idiv r12
     push rdx
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 ;; Comparisons.
 
 %macro CMP 1
     xor rax, rax
-    pop r9
-    cmp r9, r8
+    pop r13
+    cmp r13, r12
     set%+1 al
-    mov r8, rax
+    mov r12, rax
 %endmacro
 
 DEFCODE "=", equ
@@ -300,9 +294,9 @@ NEXT
 
 %macro TEST 1
     xor rax, rax
-    test r8, r8
+    test r12, r12
     set%+1 al
-    mov r8, rax
+    mov r12, rax
 %endmacro
 
 DEFCODE "0=", zequ
@@ -332,103 +326,103 @@ NEXT
 ;; Bitwise operations.
 
 DEFCODE "AND", and
-    pop r9
-    and r8, r9
+    pop r13
+    and r12, r13
 NEXT
 
 DEFCODE "OR", or
-    pop r9
-    or r8, r9
+    pop r13
+    or r12, r13
 NEXT
 
 DEFCODE "XOR", xor
-    pop r9
-    xor r8, r9
+    pop r13
+    xor r12, r13
 NEXT
 
 DEFCODE "INVERT", invert
-    not r8
+    not r12
 NEXT
 
 ;; Memory operations.
 
 DEFCODE "!", store
-    pop r9
-    mov [r8], r9
-    pop r8
+    pop r13
+    mov [r12], r13
+    pop r12
 NEXT
 
 DEFCODE "@", fetch
-    mov r8, [r8]
+    mov r12, [r12]
 NEXT
 
 DEFCODE "+!", addstore
-    pop r9
-    add [r8], r9
-    pop r8
+    pop r13
+    add [r12], r13
+    pop r12
 NEXT
 
 DEFCODE "-!", substore
-    pop r9
-    sub [r8], r9
-    pop r8
+    pop r13
+    sub [r12], r13
+    pop r12
 NEXT
 
 DEFCODE "C!", cstore
-    pop r9
-    mov [r8], r9l
-    pop r8
+    pop r13
+    mov [r12], r13l
+    pop r12
 NEXT
 
 DEFCODE "C@", cfetch
-    mov r8l, [r8]
-    movzx r8, r8l
+    mov r12l, [r12]
+    movzx r12, r12l
 NEXT
 
 DEFCODE "C@C!", ccopy
-    mov r15, rsi
+    mov rbx, rsi
 
-    mov rdi, r8
+    mov rdi, r12
     pop rsi
     movsb
     push rsi
-    mov r8, rdi
+    mov r12, rdi
 
-    mov rsi, r15
+    mov rsi, rbx
 NEXT
 
 DEFCODE "CMOVE", cmove
-    mov r15, rsi
+    mov rbx, rsi
 
-    mov rcx, r8
+    mov rcx, r12
     pop rdi
     pop rsi
     rep movsb
-    pop r8
+    pop r12
 
-    mov rsi, r15
+    mov rsi, rbx
 NEXT
 
 ;; Direct stack opreations.
 
 DEFCODE ">R", tor
-    RBPUSH r8
-    pop r8
+    RBPUSH r12
+    pop r12
 NEXT
 
 DEFCODE "R>", fromr
-    push r8
-    RBPOP r8
+    push r12
+    RBPOP r12
 NEXT
 
 DEFCODE "RSP@", rspfetch
-    push r8
-    mov r8, rbp
+    push r12
+    mov r12, rbp
 NEXT
 
 DEFCODE "RSP!", rspstore
-    mov rbp, r8
-    pop r8
+    mov rbp, r12
+    pop r12
 NEXT
 
 DEFCODE "RDROP", rdrop
@@ -436,21 +430,21 @@ DEFCODE "RDROP", rdrop
 NEXT
 
 DEFCODE "DSP@", dspfetch
-    push r8
-    mov r8, rsp
+    push r12
+    mov r12, rsp
 NEXT
 
 DEFCODE "DSP!", dspstore
-    mov rsp, r8
-    pop r8
+    mov rsp, r12
+    pop r12
 NEXT
 
 ;; Input, output.
 
 DEFCODE "KEY", key
-    push r8
+    push r12
     call _key
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 section .bss
@@ -494,19 +488,19 @@ align 16
 jmp .exit
 
 DEFCODE "EMIT", emit
-    push r8
+    push r12
     SAVE
     SYSCALL SYS_WRITE, 1, rsp, 1
     RESTORE
     pop rax
-    pop r8
+    pop r12
 NEXT
 
 DEFCODE "WORD", word
-    push r8
+    push r12
     call _word
     push rdi
-    mov r8, rcx
+    mov r12, rcx
 NEXT
 
 section .bss
@@ -544,11 +538,11 @@ jne .comment
 jmp _word
 
 DEFCODE "NUMBER", number
-    mov rcx, r8
+    mov rcx, r12
     pop rdi
     call _number
     push rax
-    mov r8, rcx
+    mov r12, rcx
 NEXT
 
 align 16
@@ -564,7 +558,7 @@ _number:
     mov bl, [rdi]
     add rdi, 1
     cmp bl, '-'
-    sete r9l
+    sete r13l
     jne .parse
     sub rcx, 1
     jz .error
@@ -595,7 +589,7 @@ _number:
 
     align 16
     .break:
-    test r9l, r9l
+    test r13l, r13l
     jnz .negate
 ret
 
@@ -616,30 +610,30 @@ ret
 DEFCODE "TELL", tell
     pop rax
     SAVE
-    SYSCALL SYS_WRITE, 1, rax, r8
+    SYSCALL SYS_WRITE, 1, rax, r12
     RESTORE
-    pop r8
+    pop r12
 NEXT
 
 DEFCODE "CHAR", char
-    push r8
+    push r12
     call _word
-    xor r8, r8
-    mov r8l, [rdi]
+    xor r12, r12
+    mov r12l, [rdi]
 NEXT
 
 ;; Dictionary lookup.
 
 DEFCODE "FIND", find
-    mov rcx, r8
+    mov rcx, r12
     pop rdi
     call _find
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 align 16
 _find:
-    mov r15, rsi
+    mov rbx, rsi
 
     mov rdx, var_latest
     align 16
@@ -662,20 +656,20 @@ _find:
         mov rcx, r14
     jne .loop
 
-    mov rsi, r15
+    mov rsi, rbx
     mov rax, rdx
 ret
 
 align 16
 .null:
-    mov rsi, r15
+    mov rsi, rbx
     xor rax, rax
 ret
 
 DEFCODE ">CFA", tcfa
-    mov rdi, r8
+    mov rdi, r12
     call _tcfa
-    mov r8, rdi
+    mov r12, rdi
 NEXT
 
 align 16
@@ -698,7 +692,7 @@ dq exit
 ;; Compiling.
 
 DEFCODE "CREATE", create
-    mov rcx, r8
+    mov rcx, r12
     pop rbx
 
     mov rdi, [var_here]
@@ -718,13 +712,13 @@ DEFCODE "CREATE", create
     mov [var_latest], rax
     mov [var_here], rdi
 
-    pop r8
+    pop r12
 NEXT
 
 DEFCODE ",", comma
-    mov rax, r8
+    mov rax, r12
     call _comma
-    pop r8
+    pop r12
 NEXT
 
 align 16
@@ -749,15 +743,15 @@ DEFCODE "IMMEDIATE", immediate, F_IMMED
 NEXT
 
 DEFCODE "HIDDEN", hidden
-    add r8, 8
-    xor byte [r8], F_HIDDEN
-    pop r8
+    add r12, 8
+    xor byte [r12], F_HIDDEN
+    pop r12
 NEXT
 
 DEFCODE "'", tick
-    push r8
+    push r12
     lodsq
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 DEFWORD ":", colon
@@ -787,8 +781,8 @@ DEFCODE "BRANCH", branch
 NEXT
 
 DEFCODE "0BRANCH", zbranch
-    test r8, r8
-    pop r8
+    test r12, r12
+    pop r12
     jz code_branch
     lodsq
 NEXT
@@ -861,8 +855,8 @@ jmp [rax]
 
 align 16
 .elit:
-    push r8
-    mov r8, rbx
+    push r12
+    mov r12, rbx
 NEXT
 
 align 16
@@ -884,42 +878,42 @@ align 16
 NEXT
 
 DEFCODE "EXECUTE", execute
-    mov rax, r8
-    pop r8
+    mov rax, r12
+    pop r12
 jmp [rax]
 
 DEFCODE "SYSCALL3", syscall3
-    pop r9
-    pop r10
-    pop r11
+    pop r13
+    pop r14
+    pop r15
     SAVE
-    SYSCALL r8, r9, r10, r11
+    SYSCALL r12, r13, r14, r15
     RESTORE
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 DEFCODE "SYSCALL2", syscall2
-    pop r9
-    pop r10
+    pop r13
+    pop r14
     SAVE
-    SYSCALL r8, r9, r10
+    SYSCALL r12, r13, r14
     RESTORE
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 DEFCODE "SYSCALL1", syscall1
-    pop r9
+    pop r13
     SAVE
-    SYSCALL r8, r9
+    SYSCALL r12, r13
     RESTORE
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 DEFCODE "SYSCALL0", syscall0
     SAVE
-    SYSCALL r8
+    SYSCALL r12
     RESTORE
-    mov r8, rax
+    mov r12, rax
 NEXT
 
 DEFWORD "LAST", last, F_HIDDEN

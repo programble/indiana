@@ -4,7 +4,7 @@ Port of Jonesforth:
 
 - In x86_64 NASM;
 - Supports Darwin, FreeBSD and Linux;
-- `r8` holds the top stack value;
+- `r12` holds the top stack value;
 - "Data segment" is statically allocated in `.bss` (Darwin does not support `brk`).
 
 ## Public domain
