@@ -482,11 +482,11 @@ align 8
 section .text
 align 16
 _key:
-    mov rbx, [keybuf.@]
-    cmp rbx, [keybuf.$]
+    mov rdx, [keybuf.@]
+    cmp rdx, [keybuf.$]
     jge .fill
-    xor rax, rax
-    mov al, [rbx]
+    xor eax, eax
+    mov al, [rdx]
     add qword [keybuf.@], 1
 ret
 
@@ -497,11 +497,10 @@ align 16
     mov rsi, rbx
     test rax, rax
     jbe .exit
-    mov rbx, keybuf
-    add rax, rbx
-    mov [keybuf.$], rax
-    mov rax, keybuf
-    mov [keybuf.@], rax
+    mov rdx, keybuf
+    mov [keybuf.@], rdx
+    add rdx, rax
+    mov [keybuf.$], rdx
 jmp _key
 
 align 16
