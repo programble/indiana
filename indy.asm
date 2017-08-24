@@ -470,9 +470,9 @@ ret
 
 align 16
 .fill:
-    SAVE
+    mov rbx, rsi
     SYSCALL SYS_READ, 0, keybuf, keybuf.#
-    RESTORE
+    mov rsi, rbx
     test rax, rax
     jbe .exit
     mov rbx, keybuf
@@ -489,9 +489,9 @@ jmp .exit
 
 DEFCODE "EMIT", emit
     push r12
-    SAVE
+    mov rbx, rsi
     SYSCALL SYS_WRITE, 1, rsp, 1
-    RESTORE
+    mov rsi, rbx
     pop rax
     pop r12
 NEXT
@@ -609,9 +609,9 @@ ret
 
 DEFCODE "TELL", tell
     pop rax
-    SAVE
+    mov rbx, rsi
     SYSCALL SYS_WRITE, 1, rax, r12
-    RESTORE
+    mov rsi, rbx
     pop r12
 NEXT
 
@@ -861,7 +861,7 @@ NEXT
 
 align 16
 .error:
-    SAVE
+    mov rbx, rsi
     SYSCALL SYS_WRITE, 2, errmsg, errmsg.#
     mov rcx, [keybuf.@]
     mov rdx, rcx
@@ -874,7 +874,7 @@ align 16
     sub rcx, rdx
     SYSCALL SYS_WRITE, 2, rcx, rdx
     SYSCALL SYS_WRITE, 2, errmsg.nl, 1
-    RESTORE
+    mov rsi, rbx
 NEXT
 
 DEFCODE "EXECUTE", execute
@@ -886,33 +886,33 @@ DEFCODE "SYSCALL3", syscall3
     pop r13
     pop r14
     pop r15
-    SAVE
+    mov rbx, rsi
     SYSCALL r12, r13, r14, r15
-    RESTORE
+    mov rsi, rbx
     mov r12, rax
 NEXT
 
 DEFCODE "SYSCALL2", syscall2
     pop r13
     pop r14
-    SAVE
+    mov rbx, rsi
     SYSCALL r12, r13, r14
-    RESTORE
+    mov rsi, rbx
     mov r12, rax
 NEXT
 
 DEFCODE "SYSCALL1", syscall1
     pop r13
-    SAVE
+    mov rbx, rsi
     SYSCALL r12, r13
-    RESTORE
+    mov rsi, rbx
     mov r12, rax
 NEXT
 
 DEFCODE "SYSCALL0", syscall0
-    SAVE
+    mov rbx, rsi
     SYSCALL r12
-    RESTORE
+    mov rsi, rbx
     mov r12, rax
 NEXT
 

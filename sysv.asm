@@ -1,11 +1,3 @@
-%macro SAVE 0
-    mov rbx, rsi
-%endmacro
-
-%macro RESTORE 0
-    mov rsi, rbx
-%endmacro
-
 %macro SYSCALL 1
     mov rax, %1
     syscall
