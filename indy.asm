@@ -465,7 +465,9 @@ NEXT
 
 DEFCODE "KEY", key
     push r12
+    mov rbx, rsi
     call _key
+    mov rsi, rbx
     mov r12, rax
 NEXT
 
@@ -492,9 +494,7 @@ ret
 
 align 16
 .fill:
-    mov rbx, rsi
     SYSCALL SYS_READ, 0, keybuf, keybuf.#
-    mov rsi, rbx
     test rax, rax
     jbe .exit
     mov rdx, keybuf
