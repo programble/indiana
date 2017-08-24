@@ -1,5 +1,3 @@
-%include "sysv.asm"
-
 %macro START 0
     section .text
     align 16
